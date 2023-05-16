@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 749de0317974fa747b434538cd178975, type: 3}
+  m_Name: Reckless Imp
+  m_EditorClassIdentifier: 
+  characterAsset: {fileID: 0}
+  Description: It's an Imp
+  CardImage: {fileID: 512729083, guid: c24a02024a985284a8c9e3a8e22b447e, type: 3}
+  CardImageRect: {fileID: 0}
+  ManaCost: 2
+  CardType: 0
+  MaxHealth: 2
+  Attack: 3
+  AttacksForOneTurn: 1
+  Taunt: 0
+  Charge: 1
+  CreatureScriptName: 
+  specialCreatureAmount: 0
+  SpellScriptName: 
+  specialSpellAmount: 0
+  Targets: 0
