@@ -20,6 +20,7 @@ public class BetterCardRotation : MonoBehaviour {
     public LayerMask cardLayer;
 
     // 3d collider attached to the card (2d colliders like BoxCollider2D won`t work in this case)
+    [SerializeField]
     private Collider col;
     private Transform mainCameraTransform;
 
@@ -27,7 +28,6 @@ public class BetterCardRotation : MonoBehaviour {
     private bool showingBack = false;
 
     void Start() {
-        col = GetComponent<BoxCollider>();
         mainCameraTransform = Camera.main.transform;
     }
 

@@ -824,6 +824,9 @@ GameObject:
   - component: {fileID: 5497225140726981002}
   - component: {fileID: 8701950502093002400}
   - component: {fileID: 106075713}
+  - component: {fileID: 6277251933916343229}
+  - component: {fileID: 8118065594725236479}
+  - component: {fileID: 1869428448846426501}
   m_Layer: 6
   m_Name: CreatureCard
   m_TagString: Untagged
@@ -860,7 +863,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.6945672, y: 2.7364182, z: 0.01}
+  m_Size: {x: 1.6945672, y: 2.7364182, z: 0.02}
   m_Center: {x: 0.00000011920929, y: -0.031893432, z: 0}
 --- !u!114 &5497225140726981002
 MonoBehaviour:
@@ -880,6 +883,7 @@ MonoBehaviour:
   cardLayer:
     serializedVersion: 2
     m_Bits: 64
+  col: {fileID: 5497225140726981001}
 --- !u!114 &8701950502093002400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -920,10 +924,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TurnThisOffWhenPreviewing: {fileID: 6582989300316285239}
-  TargetPosition: {x: 0, y: 2.87, z: 0}
+  TargetPosition: {x: 0, y: 3.07, z: 0}
   TargetScale: 2
   previewGameObject: {fileID: 6582989300487694326}
   ActivateInAwake: 1
+  previewDelay: 0
+--- !u!114 &6277251933916343229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582989298959164189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c164367c45a7e854da747b8900445f0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8118065594725236479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582989298959164189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 633c20b74b31cc1498b6ad1a8ef74db5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1869428448846426501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582989298959164189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 506d9471732844a4eb73e9d3b341ecb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6582989299033655770
 GameObject:
   m_ObjectHideFlags: 0
@@ -4245,7 +4286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8251848435542835694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4281,7 +4322,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8718723677977695324}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

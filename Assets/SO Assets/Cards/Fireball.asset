@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 749de0317974fa747b434538cd178975, type: 3}
-  m_Name: Reckless Imp
+  m_Name: Fireball
   m_EditorClassIdentifier: 
-  characterAsset: {fileID: 0}
-  Description: It's an Imp
-  CardImage: {fileID: 512729083, guid: c24a02024a985284a8c9e3a8e22b447e, type: 3}
+  characterAsset: {fileID: 11400000, guid: 399a5d32416820240a69bcb0391d54b9, type: 2}
+  Description: Deal 6 damage to any character.
+  CardImage: {fileID: 21300000, guid: 05dc558f558592b46aa21c86bdfbd7c1, type: 3}
   CardImageRect: {fileID: 0}
-  ManaCost: 2
-  CardType: 0
-  MaxHealth: 2
-  Attack: 3
+  ManaCost: 1
+  CardType: 2
+  MaxHealth: 0
+  Attack: 0
   AttacksForOneTurn: 1
   Taunt: 0
-  Charge: 1
+  Charge: 0
   CreatureScriptName: 
   specialCreatureAmount: 0
   SpellScriptName: 
-  specialSpellAmount: 0
-  Targets: 0
+  specialSpellAmount: 6
+  Targets: 2

@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749de0317974fa747b434538cd178975, type: 3}
   m_Name: Serene Giant
   m_EditorClassIdentifier: 
-  characterAsset: {fileID: 0}
+  characterAsset: {fileID: 11400000, guid: 410f5fbf0f44aea4d802eee6d4e2fba1, type: 2}
   Description: Sits in forest.
   CardImage: {fileID: -13113387, guid: ca1ab26856e2fe940af087c4626fd107, type: 3}
   CardImageRect: {fileID: 0}
-  ManaCost: 4
+  ManaCost: 1
   CardType: 0
   MaxHealth: 4
   Attack: 4
   AttacksForOneTurn: 1
   Taunt: 1
-  Charge: 0
+  Charge: 1
   CreatureScriptName: 
   specialCreatureAmount: 0
   SpellScriptName: 
