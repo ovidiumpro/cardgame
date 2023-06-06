@@ -17,6 +17,13 @@ public class HoverPreview : MonoBehaviour
 
     // PROPERTIES WITH UNDERLYING PRIVATE FIELDS
     private static Dictionary<int, Sequence> runningSequences = new Dictionary<int, Sequence>();
+
+     // Add new serialized field for delay
+    [SerializeField]
+    private float previewDelay = 0.5f;
+
+    // Add private field for coroutine
+    private Coroutine previewCoroutine;
     private static bool _PreviewsAllowed = true;
     public static bool PreviewsAllowed
     {
@@ -54,17 +61,41 @@ public class HoverPreview : MonoBehaviour
 
     void OnMouseEnter()
     {
-        OverCollider = true;
+        // OverCollider = true;
+        // if (PreviewsAllowed && ThisPreviewEnabled)
+        //     PreviewThisObject();
+         OverCollider = true;
         if (PreviewsAllowed && ThisPreviewEnabled)
-            PreviewThisObject();
+            previewCoroutine = StartCoroutine(PreviewWithDelay());
     }
 
     void OnMouseExit()
     {
-        OverCollider = false;
+        // OverCollider = false;
+
+        // if (!PreviewingSomeCard())
+        //     StopAllPreviews();
+         OverCollider = false;
 
         if (!PreviewingSomeCard())
             StopAllPreviews();
+
+        // If the preview coroutine has started, stop it.
+        if (previewCoroutine != null)
+        {
+            StopCoroutine(previewCoroutine);
+            previewCoroutine = null;
+        }
+    }
+
+    // Add new method for Coroutine
+    IEnumerator PreviewWithDelay()
+    {
+        // Wait for the specified delay
+        yield return new WaitForSeconds(previewDelay);
+
+        // Then call the preview method
+        PreviewThisObject();
     }
 
     // OTHER METHODS
@@ -73,7 +104,7 @@ public class HoverPreview : MonoBehaviour
         StopAllPreviews();
 
         currentlyViewing = this;
-
+        if (!PreviewsAllowed) return;
         previewGameObject.SetActive(true);
 
         if (TurnThisOffWhenPreviewing != null)
@@ -84,6 +115,7 @@ public class HoverPreview : MonoBehaviour
         // Set rotation to match the inverse rotation of the world
         Vector3 previewRotation = transform.eulerAngles;
         previewRotation.z = 0;
+        previewRotation.x = 0;
         previewGameObject.transform.rotation = Quaternion.Euler(previewRotation);
 
 

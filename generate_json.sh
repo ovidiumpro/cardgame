@@ -2,7 +2,7 @@ output_file="unity_project_files.json"
 echo '{"files":[' > $output_file
 first_file=true
 
-find ./Assets/Scripts/Visual -type f \( -iname \*.cs \) -not -name "$output_file" | while read -r file; do
+find ./Assets/Scripts -type f \( -iname \*.cs \) -not -name "$output_file" | while read -r file; do
   if [ "$first_file" = true ]; then
     first_file=false
   else

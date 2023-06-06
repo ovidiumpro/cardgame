@@ -3,7 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - LowCard
+  - TopCard
+  - TopCreature
+  - LowCreature
+  - TopHand
+  - LowHand
+  - TopPlayer
+  - LowPlayer
   layers:
   - Default
   - TransparentFX
@@ -49,4 +57,7 @@ TagManager:
     locked: 0
   - name: Everything else
     uniqueID: 1904109733
+    locked: 0
+  - name: Damage Effects
+    uniqueID: 1223599309
     locked: 0

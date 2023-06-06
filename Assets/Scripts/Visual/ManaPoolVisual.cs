@@ -10,6 +10,8 @@ public class ManaPoolVisual : MonoBehaviour
     public int TestFullCrystals;
     public int TestTotalCrystalsThisTurn;
 
+    public Image[] Crystals;
+    public Text ProgressText;
     private int totalCrystals;
     public int TotalCrystals
     {
@@ -40,8 +42,7 @@ public class ManaPoolVisual : MonoBehaviour
         }
     }
 
-    public Image[] Crystals;
-    public Text ProgressText;
+
 
     private readonly string progressTextFormat = "{0}/{1}";
 
