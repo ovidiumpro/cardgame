@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Effects/DrawCardEffect")]
-public class DrawCardsEffect : AtomicEffect
+public class DrawCardAtomicEffect : AtomicEffect
 {
-    public override void ActivateEffect(int specialAmount = 0, IIdentifiable[] targets = null, TargetType targetType = TargetType.PlayerCard)
+    public override void ActivateEffect(int specialAmount = 0, Queue<IIdentifiable> targets = null, TargetType targetType = TargetType.PlayerCard)
     {
         // Assuming there is a method to handle drawing cards
         DrawCards(specialAmount);
@@ -13,7 +13,8 @@ public class DrawCardsEffect : AtomicEffect
     
     private void DrawCards(int amount)
     {
-        Debug.Log($"Drawing {amount} cards");
-        // Logic to draw cards
+        Player p = TurnManager.Instance.whoseTurn;
+        p.DrawCards(amount);
+        //Debug.Log("Player " + p.gameObject.name + " should draw " + specialAmount + " cards.");
     }
 }

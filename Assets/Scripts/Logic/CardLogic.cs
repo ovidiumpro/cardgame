@@ -14,7 +14,7 @@ public class CardLogic: IIdentifiable
     public GameObject VisualRepresentation;
 
     private int baseManaCost;
-    public SpellEffect effect;
+    public CompositeEffect effect;
 
     public int ID
     {
@@ -45,9 +45,9 @@ public class CardLogic: IIdentifiable
         //UniqueCardID = IDFactory.GetUniqueID();
         baseManaCost = ca.ManaCost;
         ResetManaCost();
-        if (ca.SpellScriptName!= null && ca.SpellScriptName!= "")
+        if (ca.SpellEffect != null)
         {
-            effect = SpellFactory.CreateSpell(ca.SpellScriptName);
+            effect = ca.SpellEffect;
         }
         CardsCreatedThisGame.Add(UniqueCardID, this);
     }

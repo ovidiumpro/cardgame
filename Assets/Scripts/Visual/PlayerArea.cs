@@ -14,6 +14,7 @@ public class PlayerArea : MonoBehaviour
     public HeroPowerButton HeroPower;
     public TableVisual tableVisual;
     public Transform PortraitPosition;
+    public Transform PlayCardStackPosition;
 
     public bool AllowedToControlThisPlayer
     {

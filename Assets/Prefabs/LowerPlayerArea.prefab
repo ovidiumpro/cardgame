@@ -93,6 +93,37 @@ Transform:
   m_Father: {fileID: 3617116413305583026}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1351125388
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1351125389}
+  m_Layer: 0
+  m_Name: PlayCardStackSpot
+  m_TagString: Untagged
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1351125389
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1351125388}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.14, y: 4.6, z: -9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3617116413305583026}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3617116413305583027
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,6 +163,7 @@ Transform:
   - {fileID: 798539253}
   - {fileID: 719260166}
   - {fileID: 1334660128}
+  - {fileID: 1351125389}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -156,6 +188,7 @@ MonoBehaviour:
   HeroPower: {fileID: 5583142066145475332}
   tableVisual: {fileID: 8708996960084610634}
   PortraitPosition: {fileID: 520474019962806838}
+  PlayCardStackPosition: {fileID: 1351125389}
 --- !u!1 &7201764062980368874
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,6 +235,10 @@ PrefabInstance:
       propertyPath: testAsset
       value: 
       objectReference: {fileID: 11400000, guid: 7db170434802075489177c392f50f052, type: 2}
+    - target: {fileID: 6833032028590983456, guid: 16e162423beebb24b89942498d736381, type: 3}
+      propertyPath: placeHolderPrefab
+      value: 
+      objectReference: {fileID: 1713272460846041525, guid: b59aedeaec0f32849b53e43c8e452375, type: 3}
     - target: {fileID: 6877895656670135200, guid: 16e162423beebb24b89942498d736381, type: 3}
       propertyPath: m_RootOrder
       value: 6

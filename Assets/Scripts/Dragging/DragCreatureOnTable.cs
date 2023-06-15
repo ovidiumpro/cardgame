@@ -35,6 +35,7 @@ public class DragCreatureOnTable : DraggingActions {
         tempState = whereIsCard.VisualState;
         whereIsCard.VisualState = VisualStates.Dragging;
         whereIsCard.BringToFront();
+        Debug.Log("Starting drag: " + this.gameObject.name);
 
     }
 

@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Command
 {
     public static Queue<Command> CommandQueue = new Queue<Command>();
+     public static event Action OnQueueEmpty;
     public static bool playingQueue = false;
     //public static bool commandExecuting = false;
 
     public virtual void AddToQueue()
     {
+        Debug.Log("Adding command: " + this.ToString());   
         CommandQueue.Enqueue(this);
         if (!playingQueue) {
-            Debug.Log("Playing command from AddToQueue");
+            //Debug.Log("Playing command from AddToQueue");
             playingQueue = true;
             PlayFirstCommandFromQueue();
         }
@@ -33,15 +36,16 @@ public class Command
     public static void CommandExecutionComplete()
     {
         if (CommandQueue.Count > 0) {
-            Debug.Log("Playing command from ExecComplete");
             playingQueue = true;
             PlayFirstCommandFromQueue();
         }
             
         else
             playingQueue = false;
-        if (TurnManager.Instance.whoseTurn != null)
-            TurnManager.Instance.whoseTurn.HighlightPlayableCards();
+            //Debug.Log("Invoking command empty event");
+            OnQueueEmpty?.Invoke();
+        // if (TurnManager.Instance.whoseTurn != null)
+        //     TurnManager.Instance.whoseTurn.HighlightPlayableObjects();
     }
 
     public static void PlayFirstCommandFromQueue()

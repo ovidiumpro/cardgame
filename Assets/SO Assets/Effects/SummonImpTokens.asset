@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbbacb83c5ac97a4f8402f89f0683894, type: 3}
+  m_Name: SummonImpTokens
+  m_EditorClassIdentifier: 
+  propagateTarget: 0
+  creatureAsset: {fileID: 11400000, guid: 1beecf0937ecbf4408b44f066cd7da1b, type: 2}
