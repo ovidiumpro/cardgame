@@ -49,8 +49,7 @@ namespace CG.Cards
         public int specialCreatureAmount;
 
         [Header("SpellInfo")]
-        public string SpellScriptName;
-        public int specialSpellAmount;
+        public CompositeEffect SpellEffect;
         public bool Fast
         {
             get

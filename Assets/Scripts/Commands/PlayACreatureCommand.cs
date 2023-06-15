@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public class PlayACreatureCommand : Command
 {
@@ -22,10 +23,29 @@ public class PlayACreatureCommand : Command
         HandVisual PlayerHand = p.PArea.handVisual;
         GameObject card = IDHolder.GetGameObjectWithID(cl.UniqueCardID);
         PlayerHand.RemoveCard(card);
-        GameObject.Destroy(card);
-        // enable Hover Previews Back
-        HoverPreview.PreviewsAllowed = true;
-        // move this card to the spot 
-        p.PArea.tableVisual.AddCreatureAtIndex(cl.ca, creatureID, tablePos);
+        TableVisual tableVisual = p.PArea.tableVisual;
+        // Get Slots gameobject
+        Transform slotsTransform = tableVisual.transform.Find("Slots");
+
+        // Get the desired slot position
+        Transform targetSlot = slotsTransform.GetChild(tablePos);
+
+        // Create a sequence for movement and scaling
+        Sequence seq = DOTween.Sequence();
+        seq.Append(card.transform.DOMove(targetSlot.position, 0.5f));
+        seq.Insert(0f,card.transform.DOScale(0.5f, 0.5f));
+        seq.InsertCallback(0.2f, () => {
+            HoverPreview.PreviewsAllowed = true;
+            // move this card to the spot 
+            p.PArea.tableVisual.AddCreatureAtIndex(cl.ca, creatureID, tablePos);
+        });
+        // Destroy the card at the end of the sequence
+        seq.OnComplete(() =>
+        {
+            GameObject.Destroy(card);
+            
+        });
+        seq.Play();
+
     }
 }

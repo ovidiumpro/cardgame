@@ -8,7 +8,7 @@ public class CompositeEffect : ScriptableObject
     [SerializeField] private List<AtomicEffect> atomicEffects;
     [SerializeField] private List<int> specialAmounts;
 
-    public void ActivateEffects(IIdentifiable[] targets = null, TargetType targetType = TargetType.EnemyCreature)
+    public void ActivateEffects(Queue<IIdentifiable> targets = null, TargetType targetType = TargetType.EnemyCreature)
     {
        if (atomicEffects.Count != specialAmounts.Count)
         {

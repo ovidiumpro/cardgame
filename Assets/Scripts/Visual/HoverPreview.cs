@@ -148,6 +148,7 @@ public class HoverPreview : MonoBehaviour
             mySequence.Join(previewGameObject.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.InQuint));
             mySequence.AppendCallback(() =>
             {
+                if (previewGameObject == null) return;
                 previewGameObject.SetActive(false);
                 if (TurnThisOffWhenPreviewing != null)
                     TurnThisOffWhenPreviewing.SetActive(true);

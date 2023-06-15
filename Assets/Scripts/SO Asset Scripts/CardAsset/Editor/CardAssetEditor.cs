@@ -33,8 +33,7 @@ namespace CG.Cards
             }
             if (card.CardType == ECardType.Spell || card.CardType == ECardType.FastSpell)
             {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("SpellScriptName"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("specialSpellAmount"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("SpellEffect"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("Targets"));
             }
 

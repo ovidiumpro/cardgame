@@ -18,6 +18,7 @@ public class HandVisual : MonoBehaviour
     public Transform DeckTransform;
     public Transform OtherCardDrawSourceTransform;
     public Transform PlayPreviewSpot;
+    public event Action OnHandChange;
     private int UniqueID;
 
     // PRIVATE : a list of all card visual representations as GameObjects
@@ -37,16 +38,6 @@ public class HandVisual : MonoBehaviour
         }
         UniqueID = 0;
         //CommandComplete += Command.CommandExecutionFlagUpdate;
-    }
-    void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.R) && CardsInHand.Count > 0)
-        {
-            int randomIndex = UnityEngine.Random.Range(0, CardsInHand.Count);
-            GameObject cardToRemove = CardsInHand[randomIndex];
-            RemoveCard(cardToRemove);
-        }
     }
     private void NullifySlots()
     {
@@ -78,6 +69,7 @@ public class HandVisual : MonoBehaviour
         // re-calculate the position of the hand
         PlaceCardsOnNewSlotsVirtual();
         PlaceCardsOnNewSlotsAnimate(0.5f);
+        OnHandChange?.Invoke();
     }
 
     // remove card with a given index from hand
@@ -276,6 +268,7 @@ public class HandVisual : MonoBehaviour
         {
             ChangeLastCardStatusToInHand(card, w);
             PlaceCardsOnNewSlotsAnimate(slotsAnimate);
+            OnHandChange?.Invoke();
         });
     }
 
@@ -309,18 +302,19 @@ public class HandVisual : MonoBehaviour
         Command.CommandExecutionComplete();
         CardVisual.GetComponent<WhereIsTheCardOrCreature>().VisualState = VisualStates.Transition;
         RemoveCard(CardVisual);
+        OnHandChange?.Invoke();
 
-        CardVisual.transform.SetParent(null);
+        // CardVisual.transform.SetParent(null);
 
-        Sequence s = DOTween.Sequence();
-        s.Append(CardVisual.transform.DOMove(PlayPreviewSpot.position, 1f));
-        s.Insert(0f, CardVisual.transform.DORotate(Vector3.zero, 1f));
-        s.AppendInterval(2f);
-        s.OnComplete(() =>
-            {
-                //Command.CommandExecutionComplete();
-                Destroy(CardVisual);
-            });
+        // Sequence s = DOTween.Sequence();
+        // s.Append(CardVisual.transform.DOMove(PlayPreviewSpot.position, 1f));
+        // s.Insert(0f, CardVisual.transform.DORotate(Vector3.zero, 1f));
+        // s.AppendInterval(2f);
+        // s.OnComplete(() =>
+        //     {
+        //         //Command.CommandExecutionComplete();
+        //         Destroy(CardVisual);
+        //     });
     }
 
 

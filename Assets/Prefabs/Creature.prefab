@@ -2385,6 +2385,7 @@ GameObject:
   - component: {fileID: 4608043957600437205}
   - component: {fileID: 4608043957600437202}
   - component: {fileID: 4608043957600437203}
+  - component: {fileID: 7109762040690045669}
   m_Layer: 0
   m_Name: CardCanvas
   m_TagString: Untagged
@@ -2477,6 +2478,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!225 &7109762040690045669
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608043957600437201}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4608043957752027987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2969,7 +2982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce308ff8fd44da04e89d3b80145036e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardAsset: {fileID: 11400000, guid: ebc3181a69982764ea8c4f8e69fcbda5, type: 2}
+  cardAsset: {fileID: 11400000, guid: 1beecf0937ecbf4408b44f066cd7da1b, type: 2}
   PreviewManager: {fileID: 1045541923588578683}
   HealthText: {fileID: 4608043957752027988}
   AttackText: {fileID: 4608043958424413545}
@@ -3318,8 +3331,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 512729083, guid: c24a02024a985284a8c9e3a8e22b447e, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 1573204998, guid: ffec71d53a568bc43b444be1c80dd199, type: 3}
+  m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4

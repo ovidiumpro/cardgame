@@ -2,9 +2,11 @@
 using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
+using System;
 
 // this class will take care of switching turns and counting down time until the turn expires
-public class TurnManager : MonoBehaviour {
+public class TurnManager : MonoBehaviour
+{
 
     private RopeTimer timer;
 
@@ -29,13 +31,13 @@ public class TurnManager : MonoBehaviour {
             TurnMaker tm = whoseTurn.GetComponent<TurnMaker>();
             // player`s method OnTurnStart() will be called in tm.OnTurnStart();
             tm.OnTurnStart();
-            if (tm is PlayerTurnMaker)
-            {
-                whoseTurn.HighlightPlayableCards();
-            }
+            // if (tm is PlayerTurnMaker)
+            // {
+            //     whoseTurn.HighlightPlayableObjects();
+            // }
             // remove highlights for opponent.
-            whoseTurn.otherPlayer.HighlightPlayableCards(true);
-                
+            // whoseTurn.otherPlayer.HighlightPlayableObjects(true);
+
         }
     }
 
@@ -75,17 +77,17 @@ public class TurnManager : MonoBehaviour {
         s.OnComplete(() =>
             {
                 // determine who starts the game.
-                int rnd = Random.Range(0,2);  // 2 is exclusive boundary
+                int rnd = UnityEngine.Random.Range(0,2);  // 2 is exclusive boundary
                 // Debug.Log(Player.Players.Length);
                 Player whoGoesFirst = Player.Players[rnd];
                 // Debug.Log(whoGoesFirst);
                 Player whoGoesSecond = whoGoesFirst.otherPlayer;
                 // Debug.Log(whoGoesSecond);
-         
+
                 // draw 4 cards for first player and 5 for second player
                 int initDraw = 4;
                 for (int i = 0; i < initDraw; i++)
-                {            
+                {
                     // second player draws a card
                     whoGoesSecond.DrawACard(true);
                     // first player draws a card
@@ -95,10 +97,22 @@ public class TurnManager : MonoBehaviour {
                 whoGoesSecond.DrawACard();
                 //new GivePlayerACoinCommand(null, whoGoesSecond).AddToQueue();
                 whoGoesSecond.DrawACoin();
-                new StartATurnCommand(whoGoesFirst).AddToQueue();
+                //TODO: Execute these 3 lines of code after a 0.3sec delay
+                StartCoroutine(ExecuteAfterTime(0.3f, () =>
+                {
+                    whoGoesFirst.RegisterEvents();
+                    whoGoesSecond.RegisterEvents();
+                    new StartATurnCommand(whoGoesFirst).AddToQueue();
+                }));
+
+
             });
     }
-
+    private IEnumerator ExecuteAfterTime(float time, Action task)
+    {
+        yield return new WaitForSeconds(time);
+        task();
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -115,7 +129,8 @@ public class TurnManager : MonoBehaviour {
         new StartATurnCommand(whoseTurn.otherPlayer).AddToQueue();
     }
 
-    public void EndTurnTest() {
+    public void EndTurnTest()
+    {
         timer.StopTimer();
         timer.StartTimer();
     }

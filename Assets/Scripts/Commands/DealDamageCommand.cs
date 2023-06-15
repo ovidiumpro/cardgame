@@ -19,6 +19,7 @@ public class DealDamageCommand : Command {
         Debug.Log("In deal damage command!");
 
         GameObject target = IDHolder.GetGameObjectWithID(targetID);
+        DamageEffect.CreateDamageEffect(target, amount);
         if (targetID == GlobalSettings.Instance.LowPlayer.PlayerID || targetID == GlobalSettings.Instance.TopPlayer.PlayerID)
         {
             // target is a hero
@@ -28,6 +29,11 @@ public class DealDamageCommand : Command {
         {
             // target is a creature
             target.GetComponent<OneCreatureManager>().TakeDamage(amount, healthAfter);
+            CreatureLogic cl = CreatureLogic.CreaturesCreatedThisGame[targetID];
+            if (cl != null) {
+                cl.Health = healthAfter;
+            }
+            
         }
         CommandExecutionComplete();
     }

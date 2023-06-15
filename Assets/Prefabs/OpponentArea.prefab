@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &690940123719737098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7329709238055555632}
+  m_Layer: 0
+  m_Name: PlayCardStackSpot
+  m_TagString: Untagged
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7329709238055555632
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690940123719737098}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.74, y: -6.44, z: -9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2740764335949174857}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1457955246944969188
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,6 +163,7 @@ Transform:
   - {fileID: 7874508493466446129}
   - {fileID: 1457955248642467837}
   - {fileID: 1457955246944969179}
+  - {fileID: 7329709238055555632}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -156,6 +188,7 @@ MonoBehaviour:
   HeroPower: {fileID: 6431418109323319039}
   tableVisual: {fileID: 7847276081912734641}
   PortraitPosition: {fileID: 1369845046159658957}
+  PlayCardStackPosition: {fileID: 7329709238055555632}
 --- !u!1 &8631848872446084113
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,6 +757,10 @@ PrefabInstance:
       propertyPath: testAsset
       value: 
       objectReference: {fileID: 11400000, guid: ebc3181a69982764ea8c4f8e69fcbda5, type: 2}
+    - target: {fileID: 6833032028590983456, guid: 16e162423beebb24b89942498d736381, type: 3}
+      propertyPath: placeHolderPrefab
+      value: 
+      objectReference: {fileID: 1713272460846041525, guid: b59aedeaec0f32849b53e43c8e452375, type: 3}
     - target: {fileID: 6877895656670135200, guid: 16e162423beebb24b89942498d736381, type: 3}
       propertyPath: m_RootOrder
       value: 7

@@ -80,7 +80,7 @@ public class DragSpellOnTarget : DraggingActions {
             else if (h.transform.tag.Contains("Creature"))
             {
                 // hit a creature, save parent transform
-                Target = h.transform.parent.gameObject;
+                Target = h.transform.parent.parent.gameObject;
             }
         }
 
