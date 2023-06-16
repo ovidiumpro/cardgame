@@ -32,7 +32,7 @@ public class DragSpellNoTarget: DraggingActions{
         if (DragSuccessful())
         {
             // play this card
-            playerOwner.PlayASpellFromHand(GetComponent<IDHolder>().UniqueID, -1);
+            playerOwner.PlayASpellFromHand(GetComponent<IDHolder>().UniqueID, null);
         }
         else
         {
@@ -51,6 +51,11 @@ public class DragSpellNoTarget: DraggingActions{
         //bool TableNotFull = (TurnManager.Instance.whoseTurn.table.CreaturesOnTable.Count < 8);
 
         return TableVisual.CursorOverSomeTable; //&& TableNotFull;
+    }
+
+     public override Transform GetTargetTransform()
+    {
+        return transform;
     }
 
 

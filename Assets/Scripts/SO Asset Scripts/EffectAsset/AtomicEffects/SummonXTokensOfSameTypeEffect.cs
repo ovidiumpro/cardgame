@@ -15,4 +15,8 @@ public class SummonXTokensOfSameTypeEffect : AtomicEffect
         p.SummonCreatures(creatureAsset, specialAmount);
     }
 
+    public override EffectTargetData TargetInfo()
+    {
+        return null;
+    }
 }

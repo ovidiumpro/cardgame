@@ -9,4 +9,9 @@ public class FreezeAtomicEffect : AtomicEffect
     {
         // code to freeze target
     }
+
+    public override EffectTargetData TargetInfo()
+    {
+        throw new System.NotImplementedException();
+    }
 }

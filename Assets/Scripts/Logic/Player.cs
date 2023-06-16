@@ -155,17 +155,21 @@ public class Player : MonoBehaviour, ICharacter
         }
 
     }
-    public void DrawCards(int nr) {
+    public void DrawCards(int nr)
+    {
         bool fast = nr > 3;
-        for (int i=0;i<nr; i++) {
+        for (int i = 0; i < nr; i++)
+        {
             DrawACard();
         }
-        
+
 
     }
-    public void SummonCreatures(CardAsset creature, int nr) {
+    public void SummonCreatures(CardAsset creature, int nr)
+    {
         List<CreatureLogic> summons = new List<CreatureLogic>();
-        for (int i = 0; i<nr; i++ ) {
+        for (int i = 0; i < nr; i++)
+        {
             CreatureLogic cl = new CreatureLogic(this, creature);
             table.AddCreature(cl);
             summons.Add(cl);
@@ -189,13 +193,15 @@ public class Player : MonoBehaviour, ICharacter
         // no removal from deck because the coin was not in the deck
     }
 
-    public void PlayASpellFromHand(int SpellCardUniqueID, int TargetUniqueID)
+    public void PlayASpellFromHand(int SpellCardUniqueID, List<int> ids)
     {
-       // ManaLeft -= playedCard.CurrentManaCost;
+        // ManaLeft -= playedCard.CurrentManaCost;
         GameObject card = IDHolder.GetGameObjectWithID(SpellCardUniqueID);
         // Assuming `gameObject` is your GameObject
         BetterCardRotation betterCardRotation = card.GetComponent<BetterCardRotation>();
-
+        List<int> idBackups = null;
+        if (ids != null)
+            idBackups = new List<int>(ids);
         // Check if the component exists
         if (betterCardRotation != null)
         {
@@ -204,37 +210,46 @@ public class Player : MonoBehaviour, ICharacter
         }
         Sequence seq = CreateMoveToPlayPositionSequence(card, 0.25f, 1f, () =>
         {
-            // TODO: !!!
-            // if TargetUnique ID < 0 , for example = -1, there is no target.
-            if (TargetUniqueID < 0)
-                PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], null);
-            else if (TargetUniqueID == ID)
-            {
-                PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], this);
-            }
-            else if (TargetUniqueID == otherPlayer.ID)
-            {
-                PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], this.otherPlayer);
-            }
-            else
-            {
-                // target is a creature
-                PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], CreatureLogic.CreaturesCreatedThisGame[TargetUniqueID]);
-            }
+                
+           
+                PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], GetCharactersFromIds(idBackups));
         });
         seq.Play();
     }
 
-    public void PlayASpellFromHand(CardLogic playedCard, ICharacter target)
+    private List<IIdentifiable> GetCharactersFromIds(List<int> ids)
+    {
+        if (ids == null || ids.Count == 0) return null;
+        List<IIdentifiable> chars = new List<IIdentifiable>();
+        foreach (int id in ids)
+        {
+            if (id == ID)
+            {
+                chars.Add(this);
+                continue;
+            }
+            if (id == otherPlayer.ID)
+            {
+                chars.Add(this.otherPlayer);
+                continue;
+            }
+            chars.Add(CreatureLogic.CreaturesCreatedThisGame[id]);
+        }
+        return chars;
+    }
+
+    public void PlayASpellFromHand(CardLogic playedCard, List<IIdentifiable> targets)
     {
         ManaLeft -= playedCard.CurrentManaCost;
         //TODO: Idenitify how we can get the targets for all atomic effects, this method will be called with a specific target, but we need to be able to have all targets here so we can call composite effect will all targets.
         // cause effect instantly:
         if (playedCard.effect != null)
         {
-            Queue<IIdentifiable> targets = new Queue<IIdentifiable>();
-            targets.Enqueue(target);
-            playedCard.effect.ActivateEffects(targets);
+            Queue<IIdentifiable> targetsQueue = new Queue<IIdentifiable>();
+            if (targets != null ) {
+                targets.ForEach(t => targetsQueue.Enqueue(t));
+            }
+            playedCard.effect.ActivateEffects(targetsQueue);
         }
 
         else
@@ -310,7 +325,7 @@ public class Player : MonoBehaviour, ICharacter
     private void RemoveHighlights()
     {
         PArea.HeroPower.Highlighted = false;
-         foreach (CreatureLogic crl in table.CreaturesOnTable)
+        foreach (CreatureLogic crl in table.CreaturesOnTable)
         {
             GameObject g = IDHolder.GetGameObjectWithID(crl.UniqueCreatureID);
             if (g != null)

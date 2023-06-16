@@ -16,6 +16,10 @@ public class DragHeroPowerActions : DraggingActions {
     {
 
     }
+     public override Transform GetTargetTransform()
+    {
+        return transform;
+    }
 
     public override void OnEndDrag()
     {

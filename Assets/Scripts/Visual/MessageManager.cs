@@ -7,7 +7,10 @@ public class MessageManager : MonoBehaviour
 {
     public Text MessageText;
     public GameObject MessagePanel;
+    public GameObject MiniMessagePanel;
+    public Text MiniMessageText;
     private CanvasGroup canvasGroup;
+    private CanvasGroup miniCanvasGroup;
 
     // Serialized fields
     [SerializeField]
@@ -23,7 +26,9 @@ public class MessageManager : MonoBehaviour
     {
         Instance = this;
         MessagePanel.SetActive(false);
+        MiniMessagePanel.SetActive(false);
         canvasGroup = MessagePanel.GetComponent<CanvasGroup>();
+        miniCanvasGroup = MiniMessagePanel.GetComponent<CanvasGroup>();
     }
 
     public void ShowMessage(string Message, float Duration)
@@ -45,11 +50,52 @@ public class MessageManager : MonoBehaviour
         Command.CommandExecutionComplete();
         // Fade out
         canvasGroup.DOFade(0, fadeDuration)
-        .OnComplete(() => {
-            MessagePanel.SetActive(false);
-            canvasGroup.alpha = 1f; // reset the transparency to be ready for the next message
-            
-        });
+                .OnComplete(() =>
+                {
+                    MessagePanel.SetActive(false);
+                    canvasGroup.alpha = 1f; // reset the transparency to be ready for the next message
+
+                });
     }
+    IEnumerator RefreshMessage(string Message, float duration) {
+        FadeOutMessage(duration);
+        yield return new WaitForSeconds(duration);
+        FadeInMessage(Message, duration);
+    }
+    
+
+    private void FadeOutMessage(float fadeDuration)
+    {
+        miniCanvasGroup.DOFade(0, fadeDuration)
+                .OnComplete(() =>
+                {
+                    MiniMessagePanel.SetActive(false);
+                    miniCanvasGroup.alpha = 1f; // reset the transparency to be ready for the next message
+
+                });
+    }
+
+    private void FadeInMessage(string Message, float fadeDuration)
+    {
+        MiniMessageText.text = Message;
+        MiniMessagePanel.SetActive(true);
+
+        // Fade in and scale up
+        miniCanvasGroup.DOFade(1, fadeDuration);
+        MiniMessageText.transform.DOScale(scaleValue, scaleDuration).SetLoops(2, LoopType.Yoyo);
+    }
+    public void RefreshMessagePanel(string Message, float duration) {
+        StartCoroutine(RefreshMessage(Message, duration));
+    }
+    public void ShowMessageInstant(string Message) {
+        MiniMessageText.text = Message;
+        MiniMessagePanel.SetActive(true);
+        miniCanvasGroup.alpha = 1f;
+    }
+    public void HideMessageInstant() {
+        MiniMessagePanel.SetActive(false);
+        miniCanvasGroup.alpha = 0f;
+    }
+
     
 }

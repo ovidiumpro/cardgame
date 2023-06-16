@@ -31,6 +31,10 @@ public class DragCreatureAttack : DraggingActions
         manager = GetComponentInParent<OneCreatureManager>();
         whereIsThisCreature = GetComponentInParent<WhereIsTheCardOrCreature>();
     }
+     public override Transform GetTargetTransform()
+    {
+        return transform;
+    }
 
     public override bool CanDrag
     {

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: MindfireEffect
   m_EditorClassIdentifier: 
   atomicEffects:
+  - {fileID: 11400000, guid: a994f7007605bc247a9881902c51b1cd, type: 2}
   - {fileID: 11400000, guid: 436eebe5fbf4a8b4d976270f21892ffc, type: 2}
   - {fileID: 11400000, guid: fe13202d0d7292c449e7d1dd6cb2ceba, type: 2}
-  specialAmounts: 0400000001000000
+  specialAmounts: 040000000400000001000000

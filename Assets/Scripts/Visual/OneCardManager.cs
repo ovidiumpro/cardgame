@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using CG.Cards;
 using System.Text;
+using System;
 // holds the refs to all the Text, Images on the card
 public class OneCardManager : MonoBehaviour {
 
@@ -25,6 +26,8 @@ public class OneCardManager : MonoBehaviour {
     public Image CardFaceFrameImage;
     public Image CardFaceGlowImage;
     public Image CardBackGlowImage;
+
+    public event Action OnCardLoaded;
 
     void Awake()
     {
@@ -87,6 +90,9 @@ public class OneCardManager : MonoBehaviour {
             PreviewManager.cardAsset = cardAsset;
             PreviewManager.ReadCardFromAsset();
         }
+    }
+    private void Start() {
+        OnCardLoaded?.Invoke();
     }
     public static string EnumToStringWithSpaces(ECardType value)
 {

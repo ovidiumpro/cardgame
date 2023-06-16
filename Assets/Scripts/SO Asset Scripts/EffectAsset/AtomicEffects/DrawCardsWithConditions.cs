@@ -22,4 +22,8 @@ public class DrawCardsWithConditions : AtomicEffect
 
     }
 
+    public override EffectTargetData TargetInfo()
+    {
+        return null;
+    }
 }

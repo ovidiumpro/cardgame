@@ -10,7 +10,12 @@ public class DrawCardAtomicEffect : AtomicEffect
         // Assuming there is a method to handle drawing cards
         DrawCards(specialAmount);
     }
-    
+
+    public override EffectTargetData TargetInfo()
+    {
+        return null;
+    }
+
     private void DrawCards(int amount)
     {
         Player p = TurnManager.Instance.whoseTurn;

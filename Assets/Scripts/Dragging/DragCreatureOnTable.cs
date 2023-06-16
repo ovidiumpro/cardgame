@@ -29,6 +29,10 @@ public class DragCreatureOnTable : DraggingActions {
         manager = GetComponent<OneCardManager>();
     }
 
+     public override Transform GetTargetTransform()
+    {
+        return transform;
+    }
     public override void OnStartDrag()
     {
         savedHandSlot = whereIsCard.Slot;

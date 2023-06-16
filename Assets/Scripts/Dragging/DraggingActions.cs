@@ -4,6 +4,9 @@ using System;
 
 public abstract class DraggingActions : MonoBehaviour {
 
+    private Transform TargetTransform;
+
+    public abstract Transform GetTargetTransform();
     public abstract void OnStartDrag();
 
     public abstract void OnEndDrag();
@@ -37,4 +40,5 @@ public abstract class DraggingActions : MonoBehaviour {
     }
 
     protected abstract bool DragSuccessful();
+    
 }

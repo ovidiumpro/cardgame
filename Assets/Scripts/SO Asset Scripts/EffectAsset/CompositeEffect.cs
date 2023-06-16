@@ -21,4 +21,17 @@ public class CompositeEffect : ScriptableObject
             atomicEffects[i].ActivateEffect(specialAmounts[i], targets, targetType);
         }
     }
+    //targetType, promptMessage
+    public List<EffectTargetData> PollTargetsRequired() {
+        List<EffectTargetData> targets = new List<EffectTargetData>();
+        for (int i = 0; i < atomicEffects.Count; i++)
+        {
+            EffectTargetData targetData = atomicEffects[i].TargetInfo();
+            if (targetData != null) {
+                if (i>0 && atomicEffects[i-1].propagateTarget) continue;
+                targets.Add(targetData);
+            }
+        } 
+        return targets;
+    }
 }

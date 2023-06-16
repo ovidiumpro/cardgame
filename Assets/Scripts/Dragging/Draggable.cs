@@ -13,6 +13,7 @@ public class Draggable : MonoBehaviour {
     // PRIVATE FIELDS
 
     // a flag to know if we are currently dragging this GameObject
+    private Transform targetTransform;
     private bool dragging = false;
 
     // distance from the center of this Game Object to the point where we clicked to start dragging 
@@ -35,6 +36,7 @@ public class Draggable : MonoBehaviour {
     void Awake()
     {
         da = GetComponent<DraggingActions>();
+        targetTransform = da.GetTargetTransform();
     }
 
     void OnMouseDown()
@@ -47,8 +49,8 @@ public class Draggable : MonoBehaviour {
             HoverPreview.PreviewsAllowed = false;
             _draggingThis = this;
             da.OnStartDrag();
-            zDisplacement = -Camera.main.transform.position.z + transform.position.z;
-            pointerDisplacement = -transform.position + MouseInWorldCoords();
+            zDisplacement = -Camera.main.transform.position.z + targetTransform.position.z;
+            pointerDisplacement = -targetTransform.position + MouseInWorldCoords();
         }
     }
 
@@ -59,7 +61,7 @@ public class Draggable : MonoBehaviour {
         { 
             Vector3 mousePos = MouseInWorldCoords();
             //Debug.Log(mousePos);
-            transform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, transform.position.z);   
+            targetTransform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, targetTransform.position.z);   
             da.OnDraggingInUpdate();
         }
     }
@@ -83,6 +85,10 @@ public class Draggable : MonoBehaviour {
         //Debug.Log(screenMousePos);
         screenMousePos.z = zDisplacement;
         return Camera.main.ScreenToWorldPoint(screenMousePos);
+    }
+    public void SetTransformPositionToCursor(Transform targetTransform) {
+        Vector3 mousePos = MouseInWorldCoords();
+        targetTransform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, targetTransform.position.z); 
     }
         
 }
