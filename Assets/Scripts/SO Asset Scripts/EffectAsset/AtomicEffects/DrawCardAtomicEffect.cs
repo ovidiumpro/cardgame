@@ -19,7 +19,7 @@ public class DrawCardAtomicEffect : AtomicEffect
     private void DrawCards(int amount)
     {
         Player p = TurnManager.Instance.whoseTurn;
-        p.DrawCards(amount);
+        p.DrawCards(amount, true);
         //Debug.Log("Player " + p.gameObject.name + " should draw " + specialAmount + " cards.");
     }
 }

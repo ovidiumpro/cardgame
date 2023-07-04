@@ -90,8 +90,18 @@ public class Player : MonoBehaviour, ICharacter
         PlayerID = IDFactory.GetUniqueID();
     }
 
+
+    void OnDisable()
+    {
+        TurnManager.Instance.OnTurnChange -= HandleTurnChange;
+        this.PArea.tableVisual.OnTableChange -= HighlightCreatures;
+        this.PArea.handVisual.OnHandChange -= HighlightCards;
+        this.PArea.handVisual.OnHandChange -= HighlightHeroPower;
+    }
+
     public void RegisterEvents()
     {
+        TurnManager.Instance.OnTurnChange += HandleTurnChange;
         this.PArea.tableVisual.OnTableChange += HighlightCreatures;
         this.PArea.handVisual.OnHandChange += HighlightCards;
         this.PArea.handVisual.OnHandChange += HighlightHeroPower;
@@ -122,15 +132,47 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (EndTurnEvent != null)
             EndTurnEvent.Invoke();
-        ManaThisTurn -= bonusManaThisTurn;
         bonusManaThisTurn = 0;
         GetComponent<TurnMaker>().StopAllCoroutines();
-        RemoveHighlights();
+    }
+    public void OnTemporaryTurnEnd()
+    {
+
     }
 
 
-    public void DrawACard(bool fast = false)
+    void HandleTurnChange(Player player, bool isTurnStart)
     {
+        // Highlight or unhighlight playable based on the value of the parameter
+        if (player == this)
+        {
+            Debug.Log("During stack: " + !isTurnStart + "; for player: " + player.gameObject.name);
+            if (isTurnStart)
+            {
+                HighlightPlayableObjects();
+            }
+            else
+            {
+                HighlightCardsFast();
+                this.PArea.PlayStackControls.SetActive(true);
+            }
+
+        }
+        else
+        {
+            RemoveHighlights();
+            this.PArea.PlayStackControls.SetActive(false);
+        }
+    }
+
+
+
+    public void DrawACard(bool fast = false, bool addToFront = false, int nr = 1)
+    {
+        //we are getting nr of cards drawn here
+        //then call gamestate to get which cards will be drawn
+        //then we will create a draw card command for each card logic, adding them to queue 1 by 1, when reaching the last one, we call AddToQueue
+        //
         if (deck.cards.Count > 0)
         {
             if (hand.CardsInHand.Count < PArea.handVisual.slots.Children.Length)
@@ -145,7 +187,7 @@ public class Player : MonoBehaviour, ICharacter
                 // 3) logic: remove the card from the deck
                 deck.cards.RemoveAt(0);
                 // 4) create a command
-                new DrawACardCommand(hand.CardsInHand[indexToPlaceACard], this, indexToPlaceACard, fast, fromDeck: true).AddToQueue();
+                new DrawACardCommand(hand.CardsInHand[indexToPlaceACard], this, indexToPlaceACard, fast, fromDeck: true).AddToQueue(addToFront);
             }
         }
         else
@@ -155,12 +197,12 @@ public class Player : MonoBehaviour, ICharacter
         }
 
     }
-    public void DrawCards(int nr)
+    public void DrawCards(int nr, bool addToFront = false)
     {
         bool fast = nr > 3;
         for (int i = 0; i < nr; i++)
         {
-            DrawACard();
+            DrawACard(fast, addToFront);
         }
 
 
@@ -208,13 +250,7 @@ public class Player : MonoBehaviour, ICharacter
             // Disable the script
             betterCardRotation.enabled = false;
         }
-        Sequence seq = CreateMoveToPlayPositionSequence(card, 0.25f, 1f, () =>
-        {
-                
-           
-                PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], GetCharactersFromIds(idBackups));
-        });
-        seq.Play();
+        PlayASpellFromHand(CardLogic.CardsCreatedThisGame[SpellCardUniqueID], GetCharactersFromIds(idBackups));
     }
 
     private List<IIdentifiable> GetCharactersFromIds(List<int> ids)
@@ -241,25 +277,39 @@ public class Player : MonoBehaviour, ICharacter
     public void PlayASpellFromHand(CardLogic playedCard, List<IIdentifiable> targets)
     {
         ManaLeft -= playedCard.CurrentManaCost;
-        //TODO: Idenitify how we can get the targets for all atomic effects, this method will be called with a specific target, but we need to be able to have all targets here so we can call composite effect will all targets.
-        // cause effect instantly:
-        if (playedCard.effect != null)
-        {
-            Queue<IIdentifiable> targetsQueue = new Queue<IIdentifiable>();
-            if (targets != null ) {
-                targets.ForEach(t => targetsQueue.Enqueue(t));
-            }
-            playedCard.effect.ActivateEffects(targetsQueue);
-        }
-
-        else
-        {
-            Debug.LogWarning("No effect found on card " + playedCard.ca.name);
-        }
-        // no matter what happens, move this card to PlayACardSpot
-        new PlayASpellCardCommand(this, playedCard).AddToQueue();
+        //Visually and logically remove the card from hand before activating the effects
         // remove this card from hand
         hand.CardsInHand.Remove(playedCard);
+        // no matter what happens, move this card to PlayACardSpot
+        new PlayASpellCardCommand(this, playedCard).AddToQueue();
+        GameObject card = IDHolder.GetGameObjectWithID(playedCard.UniqueCardID);
+        new CallbackCommand(() =>
+        {
+            Sequence seq = CreateMoveToPlayPositionSequence(card, 0.25f, 1f, GetCardType(playedCard.ca.CardType),() =>
+                   {
+                       if (playedCard.effect != null)
+                       {
+                           Queue<IIdentifiable> targetsQueue = new Queue<IIdentifiable>();
+                           if (targets != null)
+                           {
+                               targets.ForEach(t => targetsQueue.Enqueue(t));
+                           }
+                           Command.PauseQueueExecution();
+                           playedCard.effect.ActivateEffects(targetsQueue);
+                           Command.ResumeQueueExecution();
+                       }
+
+                       else
+                       {
+                           Debug.LogWarning("No effect found on card " + playedCard.ca.name);
+                       }
+
+                       new RemovePlayedSpellCardFromTheScreenCommand(this, playedCard).AddToQueue();
+                   });
+            seq.Play();
+        }).AddToQueue();
+
+
         // check if this is a creature or a spell
     }
 
@@ -267,7 +317,15 @@ public class Player : MonoBehaviour, ICharacter
     {
         PlayACreatureFromHand(CardLogic.CardsCreatedThisGame[UniqueID], tablePos);
     }
-
+    private CardType GetCardType(ECardType cardType) {
+        switch (cardType) {
+            case ECardType.Creature: return CardType.CreatureCard;
+            case ECardType.FlashCreature: return CardType.FlashCreatureCard;
+            case ECardType.Spell: return CardType.SpellCard;
+            case ECardType.FastSpell: return CardType.FastSpellCard;
+            default: return CardType.None;
+        }
+    }
     public void PlayACreatureFromHand(CardLogic playedCard, int tablePos)
     {
         //Debug.Log(ManaLeft);
@@ -283,28 +341,40 @@ public class Player : MonoBehaviour, ICharacter
             // Disable the script
             betterCardRotation.enabled = false;
         }
-        Sequence seq = CreateMoveToPlayPositionSequence(card, 0.25f, 1f, () =>
+        // remove this card from hand
+        hand.CardsInHand.Remove(playedCard);
+        //remove card visually
+        new PlayASpellCardCommand(this, playedCard).AddToQueue();
+        //destroy placeholder
+        this.PArea.tableVisual.DestroyPlaceholder();
+        new CallbackCommand(() =>
         {
-            // Debug.Log("Mana Left after played a creature: " + ManaLeft);
-            // create a new creature object and add it to Table
-            CreatureLogic newCreature = new CreatureLogic(this, playedCard.ca);
-            table.CreaturesOnTable.Insert(tablePos, newCreature);
-            // no matter what happens, move this card to PlayACardSpot
-            new PlayACreatureCommand(playedCard, this, tablePos, newCreature.UniqueCreatureID).AddToQueue();
-            // remove this card from hand
-            hand.CardsInHand.Remove(playedCard);
-            //TODO: Creature effect trigger here
-            //HighlightPlayableObjects();
-        });
-        seq.Play();
+            Sequence seq = CreateMoveToPlayPositionSequence(card, 0.25f, 1f, GetCardType(playedCard.ca.CardType),() =>
+                    {
+                        // Debug.Log("Mana Left after played a creature: " + ManaLeft);
+                        // create a new creature object and add it to Table
+                        CreatureLogic newCreature = new CreatureLogic(this, playedCard.ca);
+                        table.CreaturesOnTable.Insert(tablePos, newCreature);
+                        // no matter what happens, move this card to PlayACardSpot
+
+
+                        new PlayACreatureCommand(playedCard, this, tablePos, newCreature.UniqueCreatureID).AddToQueue(true);
+
+                        //TODO: Creature effect trigger here
+                        //HighlightPlayableObjects();
+                    });
+            seq.Play();
+        }).AddToQueue();
+
     }
-    private Sequence CreateMoveToPlayPositionSequence(GameObject card, float transitionTime, float waitTime, Action onCompleteCallback)
+    private Sequence CreateMoveToPlayPositionSequence(GameObject card, float transitionTime, float waitTime, CardType cardType,Action onCompleteCallback)
     {
+        //card.transform.DOMove(PArea.PlayCardStackPosition.position, transitionTime)
         Sequence seq = DOTween.Sequence();
-        seq.Append(card.transform.DOMove(PArea.PlayCardStackPosition.position, transitionTime));
+        seq.InsertCallback(0f, () => PlayStackPositionManager.Instance.AddCard(new PlayStackElement(card, onCompleteCallback, cardType, this )));
         seq.Insert(0f, card.transform.DORotate(Vector3.zero, transitionTime));
-        seq.AppendInterval(waitTime);
-        seq.OnComplete(() => onCompleteCallback());
+        // seq.AppendInterval(waitTime);
+        // seq.OnComplete(() => onCompleteCallback());
         return seq;
     }
     public void PredictNewSlotForCreatureOnTable(int tablePos)
@@ -322,7 +392,7 @@ public class Player : MonoBehaviour, ICharacter
         new GameOverCommand(this).AddToQueue();
     }
 
-    private void RemoveHighlights()
+    public void RemoveHighlights()
     {
         PArea.HeroPower.Highlighted = false;
         foreach (CreatureLogic crl in table.CreaturesOnTable)
@@ -364,7 +434,35 @@ public class Player : MonoBehaviour, ICharacter
                 g.GetComponent<OneCreatureManager>().CanAttackNow = crl.CanAttack;
         }
     }
+    public bool PlayerCanPlayCardsOnOpponentTurn()
+    {
+        bool hasCardsToPlay = false;
+        foreach (CardLogic cl in hand.CardsInHand)
+        {
+            GameObject g = IDHolder.GetGameObjectWithID(cl.UniqueCardID);
+            if (g != null)
+            {
+                bool canBePlayed = (cl.CurrentManaCost <= ManaLeft) && cl.IsFast();
+                hasCardsToPlay = hasCardsToPlay || canBePlayed;
+                g.GetComponent<OneCardManager>().CanBePlayedNow = canBePlayed;
+            }
 
+        }
+        return hasCardsToPlay;
+    }
+    public void HighlightCardsFast()
+    {
+        foreach (CardLogic cl in hand.CardsInHand)
+        {
+            GameObject g = IDHolder.GetGameObjectWithID(cl.UniqueCardID);
+            if (g != null)
+            {
+                bool canBePlayed = (cl.CurrentManaCost <= ManaLeft) && cl.IsFast();
+                g.GetComponent<OneCardManager>().CanBePlayedNow = canBePlayed;
+            }
+
+        }
+    }
     private void HighlightCards()
     {
         if (TurnManager.Instance.whoseTurn != this) return;

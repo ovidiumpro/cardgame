@@ -70,7 +70,7 @@ public class DragSpellOnTarget : DraggingActions
         sr.enabled = true;
         lr.enabled = true;
         currentlySelectingTarget = 0;
-        if (currentlySelectingTarget > targetsMetadata.Count) return;
+        if (targetsMetadata.Count == 0) return;
         currentTarget = targetsMetadata[currentlySelectingTarget];
         MessageManager.Instance.ShowMessageInstant(currentTarget.promptMessage);
 
@@ -78,30 +78,7 @@ public class DragSpellOnTarget : DraggingActions
 
     public override void OnDraggingInUpdate()
     {
-        // This code only draws the arrow
-        Vector3 notNormalized = TargetGO.position - transform.position;
-        Vector3 direction = notNormalized.normalized;
-        float distanceToTarget = (direction * 2.3f).magnitude;
-        if (notNormalized.magnitude > distanceToTarget)
-        {
-            // draw a line between the creature and the target
-            lr.SetPositions(new Vector3[] { transform.position, TargetGO.position - direction * 2.3f });
-            lr.enabled = true;
-
-            // position the end of the arrow between near the target.
-            triangleSR.enabled = true;
-            triangleSR.transform.position = TargetGO.position - 1.5f * direction;
-
-            // proper rotarion of arrow end
-            float rot_z = Mathf.Atan2(notNormalized.y, notNormalized.x) * Mathf.Rad2Deg;
-            triangleSR.transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-        }
-        else
-        {
-            // if the target is not far enough from creature, do not show the arrow
-            lr.enabled = false;
-            triangleSR.enabled = false;
-        }
+        DraggingActions.UpdateTargetPosition( transform,TargetGO, lr, triangleSR);
         // Right click cancels the operation
         if (Input.GetMouseButtonDown(1))
         {
@@ -132,7 +109,7 @@ public class DragSpellOnTarget : DraggingActions
             else if (h.transform.tag.Contains("Creature"))
             {
                 // hit a creature, save parent transform
-                Target = h.transform.parent.parent.gameObject;
+                Target = h.transform.gameObject;
             }
         }
 
@@ -215,9 +192,9 @@ public class DragSpellOnTarget : DraggingActions
     }
 
     private bool NoEligibleTargetsLeftForNext()
-    {
-        List<int> enemyCreatures = GlobalSettings.Instance.TopPlayer.table.CreaturesOnTable.ConvertAll(cl => cl.ID);
-        List<int> friendlyCreatures = GlobalSettings.Instance.LowPlayer.table.CreaturesOnTable.ConvertAll(cl => cl.ID);
+    {   
+        List<int> enemyCreatures = TurnManager.Instance.whoseTurn.otherPlayer.table.CreaturesOnTable.ConvertAll(cl => cl.ID);
+        List<int> friendlyCreatures = TurnManager.Instance.whoseTurn.table.CreaturesOnTable.ConvertAll(cl => cl.ID);
         // we also have lowPLayerID and topPlayerID available
         // selectedTargets currently holds all ids of selected targets.
         // currentlySelectingTarget.targetType is of type TargetingOptions

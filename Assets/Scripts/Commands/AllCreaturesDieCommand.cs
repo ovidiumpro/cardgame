@@ -13,6 +13,7 @@ public class AllCreaturesDieCommand : Command
     }
     public override void StartCommandExecution()
     {
+        if (CreaturesToDie.Count == 0) return;
         var creatureGroupsByOwner = CreaturesToDie.GroupBy(creature => creature.owner);
         foreach (var group in creatureGroupsByOwner)
     {

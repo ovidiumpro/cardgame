@@ -25,6 +25,7 @@ public class DrawACardCommand : Command {
 
     public override void StartCommandExecution()
     {
+        //need to add logic here to call gameState and let it know that we are about to draw a card.
         p.PArea.PDeck.CardsInDeck--;
         p.PArea.handVisual.GivePlayerACard(cl.ca, cl.UniqueCardID, fast, fromDeck);
     }

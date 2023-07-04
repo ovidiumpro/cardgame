@@ -12,7 +12,7 @@ public class StartATurnCommand : Command {
 
     public override void StartCommandExecution()
     {
-        TurnManager.Instance.whoseTurn = p;
+        TurnManager.Instance.StartATurnForPlayer(p);
         // this command is completed instantly
         CommandExecutionComplete();
     }

@@ -8,7 +8,8 @@ using DG.Tweening;
 /// whether the drop was successful or not.
 /// </summary>
 
-public class Draggable : MonoBehaviour {
+public class Draggable : MonoBehaviour
+{
 
     // PRIVATE FIELDS
 
@@ -29,7 +30,7 @@ public class Draggable : MonoBehaviour {
     private static Draggable _draggingThis;
     public static Draggable DraggingThis
     {
-        get{ return _draggingThis;}
+        get { return _draggingThis; }
     }
 
     // MONOBEHAVIOUR METHODS
@@ -42,7 +43,7 @@ public class Draggable : MonoBehaviour {
     void OnMouseDown()
     {
         Debug.Log("On mouse down");
-        if (da!=null && da.CanDrag)
+        if (da != null && da.CanDrag)
         {
             dragging = true;
             // when we are dragging something, all previews should be off
@@ -55,17 +56,16 @@ public class Draggable : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
         if (dragging)
-        { 
-            Vector3 mousePos = MouseInWorldCoords();
-            //Debug.Log(mousePos);
-            targetTransform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, targetTransform.position.z);   
+        {
+            UpdateTargetTransformPosition();
+
             da.OnDraggingInUpdate();
         }
     }
-	
+
     void OnMouseUp()
     {
         if (dragging)
@@ -76,7 +76,7 @@ public class Draggable : MonoBehaviour {
             _draggingThis = null;
             da.OnEndDrag();
         }
-    }   
+    }
 
     // returns mouse position in World coordinates for our GameObject to follow. 
     private Vector3 MouseInWorldCoords()
@@ -86,9 +86,20 @@ public class Draggable : MonoBehaviour {
         screenMousePos.z = zDisplacement;
         return Camera.main.ScreenToWorldPoint(screenMousePos);
     }
-    public void SetTransformPositionToCursor(Transform targetTransform) {
+    public void SetTransformPositionToCursor(Transform targetTransform)
+    {
         Vector3 mousePos = MouseInWorldCoords();
-        targetTransform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, targetTransform.position.z); 
+        targetTransform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, targetTransform.position.z);
     }
-        
+    public void UpdateTargetTransformPosition()
+    {
+        Vector3 mousePos = MouseInWorldCoords();
+        //Debug.Log(mousePos);
+        targetTransform.position = new Vector3(mousePos.x - pointerDisplacement.x, mousePos.y - pointerDisplacement.y, targetTransform.position.z);
+    }
+    public void InitializePositions() {
+        zDisplacement = -Camera.main.transform.position.z + targetTransform.position.z;
+            pointerDisplacement = Vector3.zero;
+    }
+
 }

@@ -5,21 +5,30 @@ using System;
 
 public class Command
 {
-    public static Queue<Command> CommandQueue = new Queue<Command>();
-     public static event Action OnQueueEmpty;
+    public static LinkedList<Command> CommandList = new LinkedList<Command>();
+    public static event Action OnQueueEmpty;
     public static bool playingQueue = false;
+    public static bool queuePaused = false;
     //public static bool commandExecuting = false;
 
-    public virtual void AddToQueue()
+    public virtual void AddToQueue(bool addToFront = false)
     {
-        Debug.Log("Adding command: " + this.ToString());   
-        CommandQueue.Enqueue(this);
-        if (!playingQueue) {
+        Debug.Log("Adding command: " + this.ToString());
+        if (addToFront)
+        {
+            CommandList.AddFirst(this);
+        }
+        else
+        {
+            CommandList.AddLast(this);
+        }
+        if (!playingQueue && !queuePaused)
+        {
             //Debug.Log("Playing command from AddToQueue");
             playingQueue = true;
             PlayFirstCommandFromQueue();
         }
-            
+
     }
     // public static void CommandExecutionFlagUpdate() {
     //     commandExecuting = false;
@@ -35,29 +44,53 @@ public class Command
 
     public static void CommandExecutionComplete()
     {
-        if (CommandQueue.Count > 0) {
-            playingQueue = true;
+        if (CommandList.Count > 0)
+        {
+
             PlayFirstCommandFromQueue();
         }
-            
+
         else
             playingQueue = false;
-            //Debug.Log("Invoking command empty event");
-            OnQueueEmpty?.Invoke();
+        //Debug.Log("Invoking command empty event");
+        OnQueueEmpty?.Invoke();
         // if (TurnManager.Instance.whoseTurn != null)
         //     TurnManager.Instance.whoseTurn.HighlightPlayableObjects();
     }
 
     public static void PlayFirstCommandFromQueue()
     {
-        Command c = CommandQueue.Dequeue();
-       // commandExecuting = true;
-        c.StartCommandExecution();
+        if (queuePaused)
+        {
+            playingQueue = false;
+            return;
+        }
+        if (Command.CommandList.Count > 0)
+        {
+            playingQueue = true;
+            Command c = CommandList.First.Value;
+            CommandList.RemoveFirst();
+            // commandExecuting = true;
+            c.StartCommandExecution();
+        }
+
+    }
+
+    public static void PauseQueueExecution()
+    {
+        queuePaused = true;
+    }
+
+    public static void ResumeQueueExecution()
+    {
+        queuePaused = false;
+        if (!playingQueue)
+            PlayFirstCommandFromQueue();
     }
 
     public static bool CardDrawPending()
     {
-        foreach (Command c in CommandQueue)
+        foreach (Command c in CommandList)
         {
             if (c is DrawACardCommand)
                 return true;

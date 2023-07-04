@@ -50,6 +50,10 @@ public class OneCardManager : MonoBehaviour {
             CardFaceGlowImage.enabled = value;
         }
     }
+    public void SetCardAsset(CardAsset ca) {
+        cardAsset = ca;
+        ReadCardFromAsset();
+    }
 
     public void ReadCardFromAsset()
     {
@@ -90,6 +94,7 @@ public class OneCardManager : MonoBehaviour {
             PreviewManager.cardAsset = cardAsset;
             PreviewManager.ReadCardFromAsset();
         }
+        OnCardLoaded?.Invoke();
     }
     private void Start() {
         OnCardLoaded?.Invoke();

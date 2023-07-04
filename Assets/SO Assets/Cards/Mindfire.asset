@@ -17,7 +17,7 @@ MonoBehaviour:
   CardImage: {fileID: 21300000, guid: 5200f41c8ad874a4e97c39422826801f, type: 3}
   CardImageRect: {fileID: 0}
   ManaCost: 1
-  CardType: 1
+  CardType: 2
   MaxHealth: 0
   Attack: 0
   AttacksForOneTurn: 1
@@ -25,5 +25,7 @@ MonoBehaviour:
   Charge: 0
   CreatureScriptName: 
   specialCreatureAmount: 0
+  CreatureImage: {fileID: 0}
+  OnCreatureEnterEffect: {fileID: 0}
   SpellEffect: {fileID: 11400000, guid: 00f83dfcc3a387c41b9ad49f3ae12a4a, type: 2}
   Targets: 2

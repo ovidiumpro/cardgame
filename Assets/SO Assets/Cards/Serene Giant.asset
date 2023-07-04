@@ -25,6 +25,7 @@ MonoBehaviour:
   Charge: 1
   CreatureScriptName: 
   specialCreatureAmount: 0
-  SpellScriptName: 
-  specialSpellAmount: 0
+  CreatureImage: {fileID: -13113387, guid: ca1ab26856e2fe940af087c4626fd107, type: 3}
+  OnCreatureEnterEffect: {fileID: 0}
+  SpellEffect: {fileID: 0}
   Targets: 0

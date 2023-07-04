@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   propagateTarget: 0
   targetingOptions: 2
+  canDestroyCreatures: 1

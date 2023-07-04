@@ -27,8 +27,10 @@ namespace CG.Cards
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("AttacksForOneTurn"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("Taunt"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("Charge"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("CreatureScriptName"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("specialCreatureAmount"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("CreatureImage"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("OnCreatureEnterEffect"));
+                // EditorGUILayout.PropertyField(serializedObject.FindProperty("CreatureScriptName"));
+                // EditorGUILayout.PropertyField(serializedObject.FindProperty("specialCreatureAmount"));
 
             }
             if (card.CardType == ECardType.Spell || card.CardType == ECardType.FastSpell)

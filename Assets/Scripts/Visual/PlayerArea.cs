@@ -16,6 +16,8 @@ public class PlayerArea : MonoBehaviour
     public Transform PortraitPosition;
     public Transform PlayCardStackPosition;
 
+    public GameObject PlayStackControls;
+
     public bool AllowedToControlThisPlayer
     {
         get;

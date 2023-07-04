@@ -26,7 +26,7 @@ public class HandVisual : MonoBehaviour
     // Define the list to track the slots
     List<GameObject> slotTracker = new List<GameObject>();
     private readonly int MAX_CARDS_IN_HAND = 9;
-   // public event Action CommandComplete = delegate {};
+    // public event Action CommandComplete = delegate {};
 
     // ADDING OR REMOVING CARDS FROM HAND
     void Start()
@@ -64,7 +64,7 @@ public class HandVisual : MonoBehaviour
     {
         // remove a card from the list
         CardsInHand.Remove(card);
-        Destroy(card, 0.1f);
+
 
         // re-calculate the position of the hand
         PlaceCardsOnNewSlotsVirtual();
@@ -284,25 +284,25 @@ public class HandVisual : MonoBehaviour
         // set correct sorting order
         w.SetHandSortingOrder();
         // end command execution for DrawACArdCommand
-        
+
     }
 
 
     // PLAYING SPELLS
 
     // 2 Overloaded method to show a spell played from hand
-    public void PlayASpellFromHand(int CardID)
+    public void PlayACardFromHand(int CardID)
     {
         GameObject card = IDHolder.GetGameObjectWithID(CardID);
-        PlayASpellFromHand(card);
+        PlayACardFromHand(card);
     }
 
-    public void PlayASpellFromHand(GameObject CardVisual)
+    public void PlayACardFromHand(GameObject CardVisual)
     {
-        Command.CommandExecutionComplete();
+
         CardVisual.GetComponent<WhereIsTheCardOrCreature>().VisualState = VisualStates.Transition;
         RemoveCard(CardVisual);
-        OnHandChange?.Invoke();
+        Command.CommandExecutionComplete();
 
         // CardVisual.transform.SetParent(null);
 
@@ -317,5 +317,24 @@ public class HandVisual : MonoBehaviour
         //     });
     }
 
+    internal void DestroyCardVisual(int uniqueCardID)
+    {
+        GameObject card = IDHolder.GetGameObjectWithID(uniqueCardID);
+        StartCoroutine(DestroyWithDelay(card, 0.2f, () =>
+{
+    Command.CommandExecutionComplete();
+    // additional code here
+}));
 
+    }
+    private IEnumerator DestroyWithDelay(GameObject gameObject, float delay, Action callback)
+    {
+        yield return new WaitForSeconds(delay);
+        new CallbackCommand(() =>
+        {
+            PlayStackPositionManager.Instance.RemoveCard(gameObject);
+        }).AddToQueue();
+
+        callback?.Invoke();
+    }
 }

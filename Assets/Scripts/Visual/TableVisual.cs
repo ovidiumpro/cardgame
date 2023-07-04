@@ -13,7 +13,7 @@ public class TableVisual : MonoBehaviour
     // an enum that mark to whish caracter this table belongs. The alues are - Top or Low
     public AreaPosition owner;
     public CardAsset testAsset;
-    
+
     [SerializeField] public int maxCreatures = 8;
 
     // a referense to a game object that marks positions where we should put new Creatures
@@ -54,6 +54,8 @@ public class TableVisual : MonoBehaviour
     {
         get { return cursorOverThisTable; }
     }
+    public delegate void OnCreatureTrigger(int creatureID);
+    public event OnCreatureTrigger OnCreatureEnterBattlefield;
 
     // METHODS
 
@@ -98,6 +100,10 @@ public class TableVisual : MonoBehaviour
             PlaceCreaturesOnNewSlots();
         }
     }
+    public bool ThereIsRoomOnTable()
+    {
+        return CreaturesOnTable.Count < maxCreatures;
+    }
     public void PredictCreatureSlot(int tablePos)
     {
         if (placeHolder != null && CreaturesOnTable.Contains(placeHolder))
@@ -117,8 +123,6 @@ public class TableVisual : MonoBehaviour
     // method to create a new creature and add it to the table
     public void AddCreatureAtIndex(CardAsset ca, int UniqueID, int index)
     {
-        DestroyPlaceholder();
-
         // create a new creature from prefab
         GameObject creature = CreateCreatureGO(index);
         ReadCardAssetForCreature(ca, creature);
@@ -223,7 +227,7 @@ public class TableVisual : MonoBehaviour
         return GameObject.Instantiate(GlobalSettings.Instance.CreaturePrefab, slots.Children[index].transform.position, Quaternion.identity) as GameObject;
     }
 
-    private void DestroyPlaceholder()
+    public void DestroyPlaceholder()
     {
         if (placeHolder != null && CreaturesOnTable.Contains(placeHolder))
         {
@@ -315,7 +319,7 @@ public class TableVisual : MonoBehaviour
            ShiftSlotsGameObjectAccordingToNumberOfCreatures();
            PlaceCreaturesOnNewSlots();
            // Trigger the OnTableChange event
-        OnTableChange?.Invoke();
+           OnTableChange?.Invoke();
        });
     }
     public void RemoveCreaturesByIDs(List<int> IDs, Action onCompletion)
@@ -363,5 +367,82 @@ public class TableVisual : MonoBehaviour
             // g.GetComponent<WhereIsTheCardOrCreature>().SetTableSortingOrder() = CreaturesOnTable.IndexOf(g);
         }
     }
+    //TODO: Move this to card logic 
+    public void TriggerOnCreatureEnter(int creatureID)
+    {
+        //check for creature etb effect.
+        GameObject creature = IDHolder.GetGameObjectWithID(creatureID);
+        CardAsset ca = creature.GetComponent<OneCreatureManager>().cardAsset;
+        CompositeEffect effect = ca.OnCreatureEnterEffect;
+         new CallbackCommand(() => {PlayStackPositionManager.Instance.RemoveCard();}).AddToQueue();
+        if (effect != null)
+        {
+            //if effect exists, then we need to create a card game object (get the prefab from ) to add it to the stack here with action null
+            GameObject creatureCard = Instantiate(GlobalSettings.Instance.CreatureCardPrefab);
+            creatureCard.GetComponent<OneCardManager>().SetCardAsset(ca);
+            //creatureCard.transform.position = transform.position;
+            new CallbackCommand(() =>
+            {
+                PlayStackPositionManager.Instance.AddCard(new PlayStackElement(creatureCard, null, CardType.BattlecryEffect, TurnManager.Instance.whoseTurn));
+            }).AddToQueue(true);
 
+            StartCoroutine(TriggerCreatureEffect(creatureID, creature, effect, OnCreatureEnterBattlefield));
+        }
+
+    }
+    private IEnumerator TriggerCreatureEffect(int creatureID, GameObject creature, CompositeEffect effect, OnCreatureTrigger creatureEvent)
+    {
+        if (effect != null)
+        {
+            TargetSelector targetSelector = creature.GetComponent<TargetSelector>();
+            targetSelector.UpdateTargetsMetadataFromEffect(effect);
+            //now go into the target selection flow
+            while (targetSelector.SelectingTargets)
+            {
+                yield return null; // wait until next frame
+            }
+            List<int> selectedTargets = targetSelector.GetSelectedTargets();
+            List<int> idBackups = null;
+            if (selectedTargets != null)
+                idBackups = new List<int>(selectedTargets);
+            List<IIdentifiable> targets = GetCharactersFromIds(idBackups);
+            Queue<IIdentifiable> targetsQueue = new Queue<IIdentifiable>();
+            if (targets != null)
+            {
+                targets.ForEach(t => targetsQueue.Enqueue(t));
+            }
+            Command.PauseQueueExecution();
+            effect.ActivateEffects(targetsQueue);
+            Command.ResumeQueueExecution();
+            new CallbackCommand(() =>
+            {
+                PlayStackPositionManager.Instance.RemoveCard();
+            }).AddToQueue(true);
+
+
+            //Use selected targets to activate spell effect, similar to how it is done for Player.PlayASpellFromHand
+        }
+        creatureEvent?.Invoke(creatureID);
+
+    }
+    private List<IIdentifiable> GetCharactersFromIds(List<int> ids)
+    {
+        if (ids == null || ids.Count == 0) return null;
+        List<IIdentifiable> chars = new List<IIdentifiable>();
+        foreach (int id in ids)
+        {
+            if (id == GlobalSettings.Instance.TopPlayer.PlayerID)
+            {
+                chars.Add(GlobalSettings.Instance.TopPlayer);
+                continue;
+            }
+            if (id == GlobalSettings.Instance.TopPlayer.PlayerID)
+            {
+                chars.Add(GlobalSettings.Instance.TopPlayer);
+                continue;
+            }
+            chars.Add(CreatureLogic.CreaturesCreatedThisGame[id]);
+        }
+        return chars;
+    }
 }

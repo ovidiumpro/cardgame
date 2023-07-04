@@ -111,7 +111,7 @@ public class CreatureLogic : ICharacter
         AttacksLeftThisTurn = attacksForOneTurn;
     }
 
-    static void HandleQueueEmpty()
+    public static void HandleQueueEmpty()
     {
         //Debug.Log("Calling Command Empty event handler");
         // Handle the event. Create a CreaturesDieCommand when the event is raised.
@@ -119,8 +119,9 @@ public class CreatureLogic : ICharacter
         {
             Debug.Log("Creatures need to die");
             List<CreatureLogic> creaturesToDieCopy = new List<CreatureLogic>(CreatureLogic.CreaturesToDie);
-            new AllCreaturesDieCommand(creaturesToDieCopy).AddToQueue();
             CreatureLogic.CreaturesToDie.Clear();
+            new AllCreaturesDieCommand(creaturesToDieCopy).AddToQueue(true);
+            
         }
     }
     public void Die()

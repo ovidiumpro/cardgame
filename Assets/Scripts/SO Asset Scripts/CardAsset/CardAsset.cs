@@ -6,6 +6,7 @@ namespace CG.Cards
      public enum ECardType
         {
             Creature,
+            FlashCreature,
             Spell,
             FastSpell,
             Equipment,
@@ -33,6 +34,7 @@ namespace CG.Cards
         [TextArea(2, 3)]
         public string Description;  // Description for spell or character
         public Sprite CardImage;
+        
         public RectTransform CardImageRect;
         public int ManaCost;
 
@@ -47,6 +49,9 @@ namespace CG.Cards
         public bool Charge;
         public string CreatureScriptName;
         public int specialCreatureAmount;
+        public Sprite CreatureImage;
+
+        public CompositeEffect OnCreatureEnterEffect;
 
         [Header("SpellInfo")]
         public CompositeEffect SpellEffect;

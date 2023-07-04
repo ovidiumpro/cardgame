@@ -18,6 +18,9 @@ public class CompositeEffect : ScriptableObject
 
         for (int i = 0; i < atomicEffects.Count; i++)
         {
+            if (i > 0 && atomicEffects[i-1].canDestroyCreatures && !atomicEffects[i].canDestroyCreatures) {
+                new CallbackCommand(() => CreatureLogic.HandleQueueEmpty()).AddToQueue();
+            }
             atomicEffects[i].ActivateEffect(specialAmounts[i], targets, targetType);
         }
     }

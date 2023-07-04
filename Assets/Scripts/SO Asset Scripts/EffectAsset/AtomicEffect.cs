@@ -7,6 +7,7 @@ public abstract class AtomicEffect : ScriptableObject
 {
      public bool propagateTarget = false;
      public TargetingOptions targetingOptions = TargetingOptions.NoTarget;
+     public bool canDestroyCreatures = false;
     public abstract void ActivateEffect(int specialAmount = 0, Queue<IIdentifiable> targets = null, TargetType targetType = TargetType.EnemyCreature);
     public abstract EffectTargetData TargetInfo();
 }

@@ -57,6 +57,11 @@ public class CardLogic: IIdentifiable
         CurrentManaCost = baseManaCost;
     }
 
+    internal bool IsFast()
+    {
+        return ca.CardType == ECardType.FastSpell || ca.CardType == ECardType.FlashCreature;
+    }
+
     // STATIC (for managing IDs)
     public static Dictionary<int, CardLogic> CardsCreatedThisGame = new Dictionary<int, CardLogic>();
 

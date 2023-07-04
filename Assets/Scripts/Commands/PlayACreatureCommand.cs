@@ -20,32 +20,40 @@ public class PlayACreatureCommand : Command
     public override void StartCommandExecution()
     {
         // remove and destroy the card in hand 
-        HandVisual PlayerHand = p.PArea.handVisual;
+        //HandVisual PlayerHand = p.PArea.handVisual;
         GameObject card = IDHolder.GetGameObjectWithID(cl.UniqueCardID);
-        PlayerHand.RemoveCard(card);
+        //PlayerHand.RemoveCard(card);
         TableVisual tableVisual = p.PArea.tableVisual;
         // Get Slots gameobject
         Transform slotsTransform = tableVisual.transform.Find("Slots");
 
         // Get the desired slot position
         Transform targetSlot = slotsTransform.GetChild(tablePos);
-
-        // Create a sequence for movement and scaling
-        Sequence seq = DOTween.Sequence();
-        seq.Append(card.transform.DOMove(targetSlot.position, 0.5f));
-        seq.Insert(0f,card.transform.DOScale(0.5f, 0.5f));
-        seq.InsertCallback(0.2f, () => {
-            HoverPreview.PreviewsAllowed = true;
-            // move this card to the spot 
-            p.PArea.tableVisual.AddCreatureAtIndex(cl.ca, creatureID, tablePos);
-        });
-        // Destroy the card at the end of the sequence
-        seq.OnComplete(() =>
+        if (!tableVisual.ThereIsRoomOnTable())
         {
-            GameObject.Destroy(card);
-            
-        });
-        seq.Play();
+            Command.CommandExecutionComplete();
+        }
+        else
+        {
+            // Create a sequence for movement and scaling
+            Sequence seq = DOTween.Sequence();
+            seq.Append(card.transform.DOMove(targetSlot.position, 0.5f));
+            seq.Insert(0f, card.transform.DOScale(0.1f, 0.5f));
+            seq.InsertCallback(0.3f, () =>
+            {
+                HoverPreview.PreviewsAllowed = true;
+                // move this card to the spot 
+                p.PArea.tableVisual.AddCreatureAtIndex(cl.ca, creatureID, tablePos);
+            });
+            // Destroy the card at the end of the sequence
+            seq.OnComplete(() =>
+            {
+                tableVisual.TriggerOnCreatureEnter(creatureID);
+
+            });
+            seq.Play();
+        }
+
 
     }
 }

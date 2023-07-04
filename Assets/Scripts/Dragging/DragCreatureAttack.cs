@@ -1,39 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
+using CG.Cards;
 
 public class DragCreatureAttack : DraggingActions
 {
 
-    // reference to the sprite with a round "Target" graphic
-    private SpriteRenderer sr;
-    // LineRenderer that is attached to a child game object to draw the arrow
-    private LineRenderer lr;
+    public SpriteRenderer sr;
+    public Transform TargetGO;
+    public LineRenderer lr;
     // reference to WhereIsTheCardOrCreature to track this object`s state in the game
     private WhereIsTheCardOrCreature whereIsThisCreature;
     // the pointy end of the arrow, should be called "Triangle" in the Hierarchy
-    private Transform triangle;
+    public Transform triangle;
     // SpriteRenderer of triangle. We need this to disable the pointy end if the target is too close.
-    private SpriteRenderer triangleSR;
+    public SpriteRenderer triangleSR;
     // when we stop dragging, the gameObject that we were targeting will be stored in this variable.
     private GameObject Target;
     // Reference to creature manager, attached to the parent game object
     private OneCreatureManager manager;
+    private Draggable draggable;
+
+    private int lowPlayerID, topPlayerID;
 
     void Awake()
     {
-        // establish all the connections
-        sr = GetComponent<SpriteRenderer>();
-        lr = GetComponentInChildren<LineRenderer>();
-        lr.sortingLayerName = "AboveEverything";
-        triangle = transform.Find("Triangle");
-        triangleSR = triangle.GetComponent<SpriteRenderer>();
 
+        lr.sortingLayerName = "AboveEverything";
         manager = GetComponentInParent<OneCreatureManager>();
         whereIsThisCreature = GetComponentInParent<WhereIsTheCardOrCreature>();
+        draggable = GetComponent<Draggable>();
     }
-     public override Transform GetTargetTransform()
+    private void Start() {
+         lowPlayerID = GlobalSettings.Instance.LowPlayer.ID;
+        topPlayerID = GlobalSettings.Instance.TopPlayer.ID;
+    }
+    public override Transform GetTargetTransform()
     {
-        return transform;
+        return TargetGO;
     }
 
     public override bool CanDrag
@@ -47,7 +52,6 @@ public class DragCreatureAttack : DraggingActions
             //return true;
         }
     }
-
     public override void OnStartDrag()
     {
         whereIsThisCreature.VisualState = VisualStates.Dragging;
@@ -56,63 +60,19 @@ public class DragCreatureAttack : DraggingActions
         // enable line renderer to start drawing the line.
         lr.enabled = true;
     }
-
+   
+   
     public override void OnDraggingInUpdate()
     {
-        Vector3 notNormalized = transform.position - transform.parent.position;
-        Vector3 direction = notNormalized.normalized;
-        float distanceToTarget = (direction * 2.3f).magnitude;
-        if (notNormalized.magnitude > distanceToTarget)
-        {
-            // draw a line between the creature and the target
-            lr.SetPositions(new Vector3[] { transform.parent.position, transform.position - direction * 2.3f });
-            lr.enabled = true;
-
-            // position the end of the arrow between near the target.
-            triangleSR.enabled = true;
-            triangleSR.transform.position = transform.position - 1.5f * direction;
-
-            // proper rotarion of arrow end
-            float rot_z = Mathf.Atan2(notNormalized.y, notNormalized.x) * Mathf.Rad2Deg;
-            triangleSR.transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-        }
-        else
-        {
-            // if the target is not far enough from creature, do not show the arrow
-            lr.enabled = false;
-            triangleSR.enabled = false;
-        }
+        DraggingActions.UpdateTargetPosition(transform,TargetGO, lr, triangleSR);
 
     }
 
     public override void OnEndDrag()
     {
         Target = null;
-        RaycastHit[] hits;
-        Vector3 origin = Camera.main.transform.position;
-        Vector3 direction = (-Camera.main.transform.position + this.transform.position).normalized;
-        float maxDistance = 30f;
-        // TODO: raycast here anyway, store the results in 
-        hits = Physics.RaycastAll(origin, direction, maxDistance);
-        Debug.DrawRay(origin, direction * maxDistance, Color.yellow, 15f);
-
-        foreach (RaycastHit h in hits)
-        {
-            Debug.DrawLine(origin, h.point, Color.red, 15f);
-            if ((h.transform.tag == "TopPlayer" && this.tag == "LowCreature") ||
-                (h.transform.tag == "LowPlayer" && this.tag == "TopCreature"))
-            {
-                // go face
-                Target = h.transform.gameObject;
-            }
-            else if ((h.transform.tag == "TopCreature" && this.tag == "LowCreature") ||
-                    (h.transform.tag == "LowCreature" && this.tag == "TopCreature"))
-            {
-                // hit a creature, save parent transform
-                Target = h.transform.parent.parent.gameObject;
-            }
-
-        }
+        RaycastHit[] hits = GetRaycastHits();
+        Target = GetTargetForAttack(hits);
 
         bool targetValid = false;
 
@@ -149,12 +109,50 @@ public class DragCreatureAttack : DraggingActions
             whereIsThisCreature.SetTableSortingOrder();
         }
 
+        DeactivateComponentsAfterAttack();
+
+    }
+
+    private void DeactivateComponentsAfterAttack()
+    {
         // return target and arrow to original position
-        transform.localPosition = Vector3.zero;
+        TargetGO.localPosition = new Vector3(0f, 0f, -0.1f);
         sr.enabled = false;
         lr.enabled = false;
         triangleSR.enabled = false;
+    }
 
+    private GameObject GetTargetForAttack(RaycastHit[] hits)
+    {
+        foreach (RaycastHit h in hits)
+        {
+            if ((h.transform.tag == "TopPlayer" && this.tag == "LowCreature") ||
+                (h.transform.tag == "LowPlayer" && this.tag == "TopCreature"))
+            {
+                // go face
+                return h.transform.gameObject;
+            }
+            else if ((h.transform.tag == "TopCreature" && this.tag == "LowCreature") ||
+                    (h.transform.tag == "LowCreature" && this.tag == "TopCreature"))
+            {
+                // hit a creature, save parent transform
+                return h.transform.gameObject;
+            }
+
+        }
+        return null;
+    }
+   
+
+    private RaycastHit[] GetRaycastHits()
+    {
+        RaycastHit[] hits;
+        Vector3 origin = Camera.main.transform.position;
+        Vector3 direction = (-Camera.main.transform.position + TargetGO.position).normalized;
+        float maxDistance = 30f;
+        // TODO: raycast here anyway, store the results in 
+        hits = Physics.RaycastAll(origin, direction, maxDistance);
+        return hits;
     }
 
     // NOT USED IN THIS SCRIPT
